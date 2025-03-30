@@ -1,36 +1,21 @@
-def count_words(text, target_word):
-    
+def clean_and_split(text):
+    """Приводит текст к нижнему регистру и разбивает на очищенные слова."""
+    if not text:
+        return []
     text_lower = text.lower()
-    
     words = text_lower.split()
-    
-    target_word_lower = target_word.lower()
+    return [word.strip(".,!?;:-()\"'") for word in words]
 
-    count = 0
-
-    for word in words:
-
-        word_clean = word.strip(".,!?;:-()\"'")
-        
-        if word_clean == target_word_lower:
-            count += 1
-    
-    return count
-
+# Улучшенные функции:
+def count_words(text, target_word):
+    words = clean_and_split(text)
+    target = target_word.lower().strip(".,!?;:-()\"'")
+    return words.count(target)  # Встроенный метод count упрощает подсчёт
 
 def position_word(text, target_word):
-    if not text or not target_word:
-        return -1
-
-    text_lower = text.lower()
-    words = text_lower.split()
-    target_word_lower = target_word.lower()
-
-    for index, word in enumerate(words):
-        word_clean = word.strip(".,!?;:-()\"'")
-        if word_clean == target_word_lower:
-            return index
-    return -1        
+    words = clean_and_split(text)
+    target = target_word.lower().strip(".,!?;:-()\"'")
+    return words.index(target) if target in words else -1
 
 
 
