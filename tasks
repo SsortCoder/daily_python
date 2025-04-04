@@ -1,0 +1,70 @@
+
+def see_works(операция):
+    if операция == 1:
+            with open('tasks.txt', 'a', encoding='utf-8') as f:
+                 while True:
+                    works = input('Напишите задачи или "exit" для выхода>>')
+        
+                    if works.lower() != 'exit':
+                            f.write(works + '\n')
+                    else:
+                        print('Перейдите к просмотру планов')
+                        break
+    elif операция == 2:
+         open('tasks.txt', 'w').close()
+         print('Список очищен!')
+    elif операция == 3:
+        try:
+            with open('tasks.txt', 'r', encoding='utf-8') as f:
+                f_read = f.readlines()
+            if not f_read:
+                print('список дел пуст')
+                return
+            print('\nСписок дел:')
+            for i, task in enumerate(f_read, 1):
+                print(f'{i}. {task.strip()}')
+            try:
+                task_num = int(input('\nВведите номер задачи для удаления (или 0 для отмены) >>'))
+                if task_num == 0:
+                    return
+                if 1 <= task_num <= len(f_read):
+                    del f_read[task_num-1]
+
+                    with open('tasks.txt', 'w', encoding='utf-8') as f:
+                        f.writelines(f_read)
+
+                        print(f'Задача {task_num} удалена')
+                else:
+                    print('Некоректный номер задачи')
+            except ValueError:
+                print('Ошибка введите номер цифрами')
+        except FileNotFoundError:
+            print('Файл с задачами не найден! Сначала добавьте задачи.')
+
+    elif операция == 4:
+        with open('tasks.txt', 'r', encoding='utf-8') as f:
+            f_read = f.readlines()
+            if not f_read:
+                 print('Список дел пуст!')
+                 print('Вернитесь в меню')
+                 while True:
+                    try:
+                        операция = int(input('\nМЕНЮ: \n1. Добавить задачу \n2. Удалить задачу \n3. Отчистить список \n4. Просмотр \nВыбрать вариант >>'))
+                        see_works(операция)
+                    except ValueError:
+                        print('Ошибка! Введите число "1", "2" или 3')
+                                
+            else:
+                print('Cписок дел:')
+                for i, task in enumerate(f_read, 1):
+                    print(f'{i}. {task.strip()}')
+
+
+
+
+while True:
+    try:
+        операция = int(input('\nМЕНЮ: \n1. Добавить задачу \n2. Удалить задачу \n3. Отчистить список \n4. Просмотр \nВыбрать вариант >>'))
+        see_works(операция)
+    except ValueError:
+        print('Ошибка! Введите число!')
