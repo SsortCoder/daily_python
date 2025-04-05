@@ -1,7 +1,6 @@
 import requests as rq
 from datetime import datetime
 import json
-import matplotlib.pyplot as plt
 
 
 def compare_currencies(currency1, rate1, currency2, rate2):
@@ -68,4 +67,27 @@ try:
 except Exception as e:
     print("Ошибка", e)
 
+import matplotlib.pyplot as plt
+
+currencies = ['USD', 'EUR', 'GBP']
+rates = [usd_rate, eur_rate, gbp_rate]
+
+plt.figure(figsize=(10, 5))
+bars = plt.bar(currencies, rates, color=['#1f77b4', '#ff7f0e', '#2ca02c'])
+
+plt.title('Сравнение курсов валют', fontsize=14)
+plt.ylabel('Рубли', fontsize=12)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+
+for bar in bars:
+    height = bar.get_height()
+    plt.text(bar.get_x() + bar.get_width()/2., height,
+             f'{height:.2f}',
+             ha='center', va='bottom')
+
+plt.savefig('currency_rates.png')
+print('\n📊 График сохранён как currency_rates.png')
+
+
+plt.show()
 
