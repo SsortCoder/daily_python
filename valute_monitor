@@ -1,0 +1,71 @@
+import requests as rq
+from datetime import datetime
+import json
+import matplotlib.pyplot as plt
+
+
+def compare_currencies(currency1, rate1, currency2, rate2):
+    difference = rate1 - rate2
+    if difference > 0:
+        return f'{currency1} дороже {currency2} на {difference:.2f}руб'
+    return f"{currency2} дороже {currency1} на {abs(difference):.2f} руб"
+
+
+
+try:
+    url = 'https://www.cbr-xml-daily.ru/daily_json.js'
+    responce = rq.get(url)
+
+    print("Статус:", responce.status_code)
+
+
+
+    if responce.status_code == 200:
+        data = responce.json()
+
+        update_data = update_date = datetime.strptime(data['Date'][:19], "%Y-%m-%dT%H:%M:%S")
+        formatted_date = update_date.strftime("%d.%m.%Y %H:%M")
+
+        usd_rate = data['Valute']['USD']['Value']
+        usd_name = data['Valute']['USD']['Name']
+
+        eur_rate = data['Valute']['EUR']['Value']
+        eur_name = data['Valute']['EUR']['Name']
+
+        try:
+            gbp_rate = data['Valute']['GBP']['Value']
+            gbp_name = data['Valute']['GBP']['Name']
+        except KeyError:
+            gbp_rate = 0
+            gbp_name = "Фунт стерлингов (данные недоступны)"
+
+
+        print(f'\nКурс {usd_name}: {usd_rate:.2f} руб')
+        print(f'\nКурс {eur_name}: {eur_rate:.2f} руб')
+        print(f'\nКурс {gbp_name}: {gbp_rate:.2f} руб')
+
+        print(f'\nПоследнее обновление: {formatted_date}')
+    
+
+        data_to_save = {
+            'date': formatted_date,
+            'rates': {
+                'USD': usd_rate,
+                'EUR': eur_rate,
+                'GBP': gbp_rate
+            }
+        }
+        with open('rates.json', 'w', encoding='utf-8') as f:
+            json.dump(data_to_save, f, indent=2, ensure_ascii=False)
+            print('\n💾 Данные сохранены в rates.json')
+
+        print('\n' + compare_currencies("Доллар(а)", usd_rate, "Евро", eur_rate))
+        print(compare_currencies("Доллар(а)", usd_rate, "Фунт(а)", gbp_rate))
+        print('-----------------------')
+    else:
+            print("Ошибка! Код:", responce.status_code)
+
+except Exception as e:
+    print("Ошибка", e)
+
+
